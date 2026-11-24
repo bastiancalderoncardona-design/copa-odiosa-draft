@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Copa Odiosa - Draft Oficial 5-a-3 | Aermyfus Dofus Retro</title>
+  <!-- Tailwind CSS para estructura y responsividad -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tipografías épicas y legibles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --crimson-dark: #1a0507;
+      --crimson-main: #8b0000;
+      --crimson-glow: #ff2a2a;
+      --gold-main: #f59e0b;
+      --gold-bright: #fde047;
+      --stone-bg: #141215;
+      --stone-card: #221d23;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #0b0709;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(185, 28, 28, 0.35) 0%, transparent 60%),
+        radial-gradient(circle at 15% 85%, rgba(153, 27, 27, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 85% 85%, rgba(217, 119, 6, 0.2) 0%, transparent 50%);
+      color: #f3f4f6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .font-epic {
+      font-family: 'Cinzel', serif;
+    }
+
+    /* Textura de título infernal */
+    .title-infernal {
+      background: linear-gradient(180deg, #fff3b0 0%, #f59e0b 45%, #dc2626 95%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 10px rgba(220, 38, 38, 0.75));
+    }
+
+    /* Partículas flotantes de brasas */
+    .ember {
+      position: fixed;
+      bottom: -10px;
+      width: 6px;
+      height: 6px;
+      background: radial-gradient(circle, #fde047 0%, #ef4444 70%, transparent 100%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      animation: floatUp linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.85;
+      }
+      85% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-105vh) translateX(30px) scale(0.3);
+        opacity: 0;
+      }
+    }
+
+    /* Estilo de tarjetas de personaje */
+    .class-card {
+      background: linear-gradient(145deg, #272026 0%, #161216 100%);
+      border: 2px solid #44373c;
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .class-card.selectable-pick {
+      border-color: #f59e0b;
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.45);
+      cursor: pointer;
+      animation: pulseGold 1.8s infinite;
+    }
+
+    .class-card.selectable-pick:hover {
+      transform: translateY(-6px) scale(1.03);
+      border-color: #fde047;
+      box-shadow: 0 0 28px rgba(253, 224, 71, 0.8);
+    }
+
+    .class-card.selectable-ban {
+      border-color: #ef4444;
+      box-shadow: 0 0 18px rgba(239, 68, 68, 0.45);
+      cursor: pointer;
+      animation: pulseRed 1.8s infinite;
+    }
+
+    .class-card.selectable-ban:hover {
+      transform: translateY(-6px) scale(1.03);
+      border-color: #ff6b6b;
+      box-shadow: 0 0 28px rgba(239, 68, 68, 0.85);
+    }
+
+    .class-card.disabled-card {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* Estado PICKEADO */
+    .class-card.state-picked {
+      border-color: #fbbf24;
+      background: linear-gradient(145deg, #3b2a10 0%, #1c150a 100%);
+      box-shadow: 0 0 22px rgba(251, 191, 36, 0.6);
+      transform: scale(1.02);
+    }
+
+    /* Estado BANEADO con cadenas y escala de grises */
+    .class-card.state-banned {
+      border-color: #7f1d1d;
+      background: #121012;
+      animation: shakeImpact 0.45s ease-in-out;
+    }
+
+    .class-card.state-banned .avatar-wrapper {
+      filter: grayscale(100%) contrast(125%) brightness(0.45);
+      transform: scale(0.92);
+    }
+
+    /* Cadenas cruzadas animadas */
+    .chains-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      animation: slamChain 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes slamChain {
+      0% {
+        transform: scale(2.4);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes shakeImpact {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-7px) rotate(-2deg); }
+      40% { transform: translateX(7px) rotate(2deg); }
+      60% { transform: translateX(-5px) rotate(-1deg); }
+      80% { transform: translateX(5px) rotate(1deg); }
+    }
+
+    @keyframes pulseGold {
+      0%, 100% { box-shadow: 0 0 12px rgba(245, 158, 11, 0.35); }
+      50% { box-shadow: 0 0 24px rgba(251, 191, 36, 0.75); }
+    }
+
+    @keyframes pulseRed {
+      0%, 100% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.35); }
+      50% { box-shadow: 0 0 24px rgba(239, 68, 68, 0.8); }
+    }
+
+    /* Sello de Baneado */
+    .ban-stamp {
+      background: rgba(153, 27, 27, 0.92);
+      border: 2px solid #fca5a5;
+      color: #fff;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 6px;
+      transform: rotate(-10deg);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+      text-shadow: 0 1px 3px #000;
+    }
+
+    /* Sello de Pickeado */
+    .pick-stamp {
+      background: linear-gradient(90deg, #b45309, #f59e0b, #b45309);
+      border: 1px solid #fef08a;
+      color: #1a0f00;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.7);
+    }
+
+    /* Panel estilo piedra volcánica */
+    .stone-panel {
+      background: linear-gradient(180deg, rgba(28, 22, 26, 0.95) 0%, rgba(16, 12, 15, 0.98) 100%);
+      border: 1px solid rgba(220, 38, 38, 0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="relative flex flex-col justify-between selection:bg-red-800 selection:text-white">
+
+  <!-- Contenedor de partículas de brasas -->
+  <div id="embers-container"></div>
+
+  <!-- ENCABEZADO PRINCIPAL -->
+  <header class="relative z-10 w-full border-b border-red-900/50 bg-black/70 backdrop-blur-md px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <!-- Emblema Corona Demoníaca SVG -->
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-red-700 to-black border border-amber-500/60 flex items-center justify-center shadow-lg shadow-red-900/50">
+          <svg class="w-7 h-7 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="font-epic text-2xl sm:text-3xl font-black tracking-wider title-infernal leading-none">
+            LA COPA ODIOSA
+          </h1>
+          <p class="text-xs sm:text-sm text-amber-400/90 font-semibold tracking-widest uppercase">
+            Aermyfus Dofus Retro 1.29 • Draft Oficial 5-a-3
+          </p>
+        </div>
+      </div>
+
+      <!-- Controles superiores -->
+      <div class="flex items-center gap-2">
+        <button id="btn-sound" onclick="toggleSound()" class="px-3 py-2 rounded-lg bg-stone-900 hover:bg-stone-800 border border-stone-700 text-xs sm:text-sm font-semibold text-amber-300 flex items-center gap-1.5 transition cursor-pointer" title="Activar/Silenciar efectos de sonido">
+          <span id="sound-icon">🔊</span>
+          <span class="hidden sm:inline" id="sound-label">Sonido ON</span>
+        </button>
+        <button id="btn-back-setup" onclick="confirmReturnSetup()" class="hidden px-3 py-2 rounded-lg bg-red-950/80 hover:bg-red-900 border border-red-700/70 text-xs sm:text-sm font-semibold text-red-200 transition cursor-pointer">
+          ⚙️ Editar Pools
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="relative z-10 flex-grow max-w-7xl w-full mx-auto px-3 sm:px-6 py-5">
+
+    <!-- ========================================================= -->
+    <!-- PANTALLA 1: CONFIGURACIÓN DE POOLS (PRE-DRAFT)            -->
+    <!-- ========================================================= -->
+    <section id="setup-screen" class="space-y-6">
+      <div class="stone-panel rounded-2xl p-4 sm:p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-red-900/40 pb-4 mb-5">
+          <div>
+            <h2 class="font-epic text-xl sm:text-2xl font-bold text-amber-400">
+              1. Inscripción de Pools Cerrados (5 Clases por Equipo)
+            </h2>
+            <p class="text-xs sm:text-sm text-gray-300 mt-1">
+              Selecciona <strong class="text-amber-300">5 clases distintas</strong> para cada equipo. Se permiten clases repetidas entre ambos equipos (mirror match).
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="rollCoin()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-black font-extrabold text-xs sm:text-sm shadow-lg shadow-amber-900/40 transition cursor-pointer">
+              🎲 Sortear Inicio (A/B)
+            </button>
+            <button onclick="fillRandomPools()" class="px-3.5 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 border border-stone-600 text-gray-200 font-bold text-xs sm:text-sm transition cursor-pointer">
+              ⚡ Llenar Demo Rápido
+            </button>
+            <button onclick="clearPools()" class="px-3.5 py-2 rounded-xl bg-red-950/70 hover:bg-red-900/80 border border-red-800 text-red-200 font-bold text-xs sm:text-sm transition cursor-pointer">
+              🗑️ Limpiar
+            </button>
+          </div>
+        </div>
+
+        <!-- Resultado sorteo -->
+        <div id="coin-result" class="hidden mb-4 p-3 rounded-xl bg-amber-950/50 border border-amber-500/50 text-center text-amber-200 font-bold text-sm"></div>
+
+        <!-- Grid de Selección Equipo A y Equipo B -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- COLUMNA EQUIPO A -->
+          <div class="bg-black/40 border border-red-800/50 rounded-2xl p-4">
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2 flex-grow">
+                <span class="px-2.5 py-1 rounded-lg bg-red-700 text-white font-black text-xs">EQUIPO A</span>
+                <input id="input-name-a" type="text" value="Equipo A" maxlength="22" placeholder="Nombre Equipo A"
+                  class="bg-stone-900/90 border border-stone-700 focus:border-amber-500 rounded-lg px-3 py-1.5 text-sm font-bold text-white w-full outline-none" />
+              </div>
+              <span id="count-a" class="text-sm font-black px-3 py-1 rounded-full bg-stone-800 text-amber-400">0 / 5</span>
+            </div>
+
+            <!-- Slots seleccionados A -->
+            <div id="selected-slots-a" class="grid grid-cols-5 gap-2 mb-4 min-h-[76px] p-2 rounded-xl bg-stone-950/80 border border-stone-800"></div>
+
+            <!-- Catálogo 12 clases para A -->
+            <p class="text-xs text-gray-400 font-semibold mb-2 uppercase tracking-wider">Haz clic para añadir o quitar del Pool A:</p>
+            <div id="roster-a" class="grid grid-cols-4 sm:grid-cols-6 gap-2"></div>
+          </div>
+
+          <!-- COLUMNA EQUIPO B -->
+          <div class="bg-black/40 border border-amber-800/50 rounded-2xl p-4">
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2 flex-grow">
+                <span class="px-2.5 py-1 rounded-lg bg-amber-600 text-black font-black text-xs">EQUIPO B</span>
+                <input id="input-name-b" type="text" value="Equipo B" maxlength="22" placeholder="Nombre Equipo B"
+                  class="bg-stone-900/90 border border-stone-700 focus:border-amber-500 rounded-lg px-3 py-1.5 text-sm font-bold text-white w-full outline-none" />
+              </div>
+              <span id="count-b" class="text-sm font-black px-3 py-1 rounded-full bg-stone-800 text-amber-400">0 / 5</span>
+            </div>
+
+            <!-- Slots seleccionados B -->
+            <div id="selected-slots-b" class="grid grid-cols-5 gap-2 mb-4 min-h-[76px] p-2 rounded-xl bg-stone-950/80 border border-stone-800"></div>
+
+            <!-- Catálogo 12 clases para B -->
+            <p class="text-xs text-gray-400 font-semibold mb-2 uppercase tracking-wider">Haz clic para añadir o quitar del Pool B:</p>
+            <div id="roster-b" class="grid grid-cols-4 sm:grid-cols-6 gap-2"></div>
+          </div>
+
+        </div>
+
+        <!-- Botón Iniciar Draft -->
+        <div class="mt-6 flex flex-col items-center">
+          <button id="btn-start-draft" onclick="startDraft()" disabled
+            class="px-8 py-4 rounded-2xl font-epic text-lg sm:text-xl font-black tracking-wider uppercase transition shadow-2xl disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-red-700 via-red-600 to-amber-600 hover:from-red-600 hover:to-amber-500 text-white border-2 border-amber-400/80 cursor-pointer">
+            🔥 INICIAR DRAFT OFICIAL 5-A-3 🔥
+          </button>
+          <p id="setup-hint" class="text-xs text-gray-400 mt-2">Debes seleccionar 5 clases en cada equipo para comenzar.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- PANTALLA 2: ARENA DE DRAFT EN VIVO (7 TURNOS)             -->
+    <!-- ========================================================= -->
+    <section id="draft-screen" class="hidden space-y-5">
+
+      <!-- BANNER SUPERIOR DE INSTRUCCIÓN DE TURNO -->
+      <div id="turn-banner" class="stone-panel rounded-2xl p-4 sm:p-5 border-2 border-amber-500/70 text-center relative overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <span id="turn-badge" class="px-3 py-1 rounded-full bg-red-700 text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow">
+            TURNO 1 DE 7
+          </span>
+          <div class="flex items-center gap-2">
+            <button id="btn-undo" onclick="undoLastAction()" disabled class="px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 disabled:opacity-40 text-xs font-bold text-gray-200 border border-stone-600 transition cursor-pointer">
+              ↩️ Deshacer
+            </button>
+            <button onclick="resetCurrentDraft()" class="px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-xs font-bold text-amber-300 border border-stone-600 transition cursor-pointer">
+              🔄 Reiniciar Draft
+            </button>
+          </div>
+        </div>
+
+        <h2 id="turn-title" class="font-epic text-xl sm:text-3xl font-black text-amber-300 tracking-wide">
+          EQUIPO A: ELIGE TU PICK 1
+        </h2>
+        <p id="turn-subtitle" class="text-xs sm:text-base text-gray-200 mt-1 font-medium">
+          Haz clic en 1 clase de tu propio pool para enviarla a la arena.
+        </p>
+
+        <!-- Barra de progreso de 7 pasos -->
+        <div class="grid grid-cols-7 gap-1.5 max-w-2xl mx-auto mt-4">
+          <div id="step-dot-1" class="h-2 rounded-full bg-stone-700 transition-all"></div>
+          <div id="step-dot-2" class="h-2 rounded-full bg-stone-700 transition-all"></div>
+          <div id="step-dot-3" class="h-2 rounded-full bg-stone-700 transition-all"></div>
+          <div id="step-dot-4" class="h-2 rounded-full bg-stone-700 transition-all"></div>
+          <div id="step-dot-5" class="h-2 rounded-full bg-stone-700 transition-all"></div>
+          <div id="step-dot-6" class="h-2 rounded-full bg-stone-700 transition-all"></div>
+          <div id="step-dot-7" class="h-2 rounded-full bg-stone-700 transition-all"></div>
+        </div>
+      </div>
+
+      <!-- TABLERO PRINCIPAL: EQUIPO A vs EQUIPO B -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- PANEL EQUIPO A -->
+        <div id="panel-team-a" class="stone-panel rounded-2xl p-4 sm:p-5 border-2 border-red-900/60 transition-all">
+          <div class="flex items-center justify-between border-b border-red-900/40 pb-3 mb-4">
+            <div class="flex items-center gap-2.5">
+              <span class="px-2.5 py-1 rounded-lg bg-red-700 text-white font-black text-xs">A</span>
+              <h3 id="display-name-a" class="font-epic text-xl sm:text-2xl font-black text-white">Equipo A</h3>
+            </div>
+            <div class="text-xs font-bold text-amber-400 bg-black/50 px-3 py-1 rounded-full border border-amber-500/30">
+              En Arena: <span id="picked-count-a">0</span>/3 | Bans: <span id="banned-count-a">0</span>/2
+            </div>
+          </div>
+
+          <!-- Composición Final 3v3 Equipo A -->
+          <div class="mb-4">
+            <p class="text-[11px] uppercase tracking-widest text-amber-400/90 font-extrabold mb-2">⚔️ Composición Titular 3v3:</p>
+            <div id="arena-slots-a" class="grid grid-cols-3 gap-2.5">
+              <!-- Se rellena dinámicamente -->
+            </div>
+          </div>
+
+          <!-- Pool de 5 Clases Equipo A -->
+          <div>
+            <p class="text-[11px] uppercase tracking-widest text-gray-400 font-bold mb-2">📜 Pool Inscrito (5 Clases):</p>
+            <div id="pool-cards-a" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+              <!-- Tarjetas generadas por JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL EQUIPO B -->
+        <div id="panel-team-b" class="stone-panel rounded-2xl p-4 sm:p-5 border-2 border-amber-900/60 transition-all">
+          <div class="flex items-center justify-between border-b border-amber-900/40 pb-3 mb-4">
+            <div class="flex items-center gap-2.5">
+              <span class="px-2.5 py-1 rounded-lg bg-amber-600 text-black font-black text-xs">B</span>
+              <h3 id="display-name-b" class="font-epic text-xl sm:text-2xl font-black text-white">Equipo B</h3>
+            </div>
+            <div class="text-xs font-bold text-amber-400 bg-black/50 px-3 py-1 rounded-full border border-amber-500/30">
+              En Arena: <span id="picked-count-b">0</span>/3 | Bans: <span id="banned-count-b">0</span>/2
+            </div>
+          </div>
+
+          <!-- Composición Final 3v3 Equipo B -->
+          <div class="mb-4">
+            <p class="text-[11px] uppercase tracking-widest text-amber-400/90 font-extrabold mb-2">⚔️ Composición Titular 3v3:</p>
+            <div id="arena-slots-b" class="grid grid-cols-3 gap-2.5">
+              <!-- Se rellena dinámicamente -->
+            </div>
+          </div>
+
+          <!-- Pool de 5 Clases Equipo B -->
+          <div>
+            <p class="text-[11px] uppercase tracking-widest text-gray-400 font-bold mb-2">📜 Pool Inscrito (5 Clases):</p>
+            <div id="pool-cards-b" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+              <!-- Tarjetas generadas por JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CAJA DE REACCIONES DE ANFITRIONES (ODIOSA & NOSTOS) -->
+      <div class="stone-panel rounded-2xl p-3.5 sm:p-4 border border-red-800/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-red-600 to-purple-950 border-2 border-red-400 flex items-center justify-center shrink-0 shadow-lg">
+            <span class="text-2xl">😈</span>
+          </div>
+          <div>
+            <span class="text-[11px] font-black uppercase tracking-wider text-red-400">Odiosa • Anfitriona</span>
+            <p id="odiosa-quote" class="text-xs sm:text-sm text-gray-200 italic font-medium">
+              "¡Que comience la carnicería! Veamos quién tiene miedo al espejo hoy..."
+            </p>
+          </div>
+        </div>
+
+        <div class="hidden sm:block h-10 w-[1px] bg-red-900/50"></div>
+
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-600 to-stone-900 border-2 border-amber-400 flex items-center justify-center shrink-0 shadow-lg">
+            <span class="text-2xl">📜</span>
+          </div>
+          <div>
+            <span class="text-[11px] font-black uppercase tracking-wider text-amber-400">Nostos • Jurista de Aermyfus</span>
+            <p id="nostos-quote" class="text-xs sm:text-sm text-gray-200 italic font-medium">
+              "Recuerden: Nivel 160 estricto, sin scroll, sin exo/over y máximo 1 trofeo."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORIAL DE ACCIONES DEL DRAFT -->
+      <div class="bg-black/50 border border-stone-800 rounded-xl p-3">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Registro Cronológico del Draft:</p>
+        <div id="draft-log" class="flex flex-wrap gap-2 text-xs">
+          <span class="text-gray-500 italic">Esperando el Turno 1...</span>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="relative z-10 text-center py-3 px-4 border-t border-red-950/60 bg-black/80 text-xs text-gray-400">
+    <span class="text-amber-400 font-bold">LA COPA ODIOSA</span> • Aermyfus Dofus Retro 1.29 • Torneo 3v3 Nivel 160 (Draft 5-a-3 | BO1)
+  </footer>
+
+  <!-- ========================================================= -->
+  <!-- LÓGICA JAVASCRIPT & ILUSTRACIONES VECTORIALES DE CLASES   -->
+  <!-- ========================================================= -->
+  <script>
+    // 1. DEFINICIÓN DE LAS 12 CLASES CLÁSICAS DE DOFUS RETRO 1.29 CON AVATARES SVG DIVERTIDOS
+    const DOFUS_CLASSES = [
+      {
+        id: 'yopuka',
+        name: 'Yopuka',
+        role: 'Daño / Ira',
+        color: '#ef4444',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#450a0a" stroke="#ef4444" stroke-width="4"/>
+          <!-- Cabello picudo naranja -->
+          <polygon points="25,40 15,20 35,28 50,12 65,28 85,20 75,40" fill="#f97316"/>
+          <!-- Cara -->
+          <circle cx="50" cy="52" r="22" fill="#fed7aa"/>
+          <!-- Ojos blancos sin pupila (estilo Yopuka) -->
+          <ellipse cx="42" cy="50" rx="5" ry="6" fill="#ffffff" stroke="#7c2d12" stroke-width="1.5"/>
+          <ellipse cx="58" cy="50" rx="5" ry="6" fill="#ffffff" stroke="#7c2d12" stroke-width="1.5"/>
+          <!-- Cejas enojadas -->
+          <path d="M35 42 L47 46 M65 42 L53 46" stroke="#9a3412" stroke-width="3" stroke-linecap="round"/>
+          <!-- Espada gigante atrás -->
+          <path d="M72 78 L88 22 L94 26 L78 82 Z" fill="#e5e7eb" stroke="#4b5563" stroke-width="2"/>
+          <path d="M38 64 Q50 72 62 64" stroke="#7c2d12" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>`
+      },
+      {
+        id: 'ocra',
+        name: 'Ocra',
+        role: 'Alcance / Críticos',
+        color: '#22c55e',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#052e16" stroke="#22c55e" stroke-width="4"/>
+          <!-- Orejas puntiagudas -->
+          <polygon points="26,50 10,42 28,58" fill="#fed7aa"/>
+          <polygon points="74,50 90,42 72,58" fill="#fed7aa"/>
+          <!-- Cabello rubio -->
+          <path d="M28 45 Q50 15 72 45 Z" fill="#facc15"/>
+          <!-- Cara -->
+          <circle cx="50" cy="54" r="21" fill="#fed7aa"/>
+          <!-- Banda verde en la frente -->
+          <rect x="29" y="38" width="42" height="7" rx="3" fill="#16a34a"/>
+          <!-- Ojos -->
+          <circle cx="42" cy="53" r="3.5" fill="#15803d"/>
+          <circle cx="58" cy="53" r="3.5" fill="#15803d"/>
+          <!-- Arco -->
+          <path d="M18 22 Q5 50 18 78" stroke="#a16207" stroke-width="4" fill="none"/>
+          <line x1="18" y1="22" x2="18" y2="78" stroke="#fef08a" stroke-width="1.5"/>
+          <path d="M44 65 Q50 70 56 65" stroke="#9a3412" stroke-width="2.5" fill="none"/>
+        </svg>`
+      },
+      {
+        id: 'aniripsa',
+        name: 'Aniripsa',
+        role: 'Curas / PA',
+        color: '#f472b6',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#500724" stroke="#f472b6" stroke-width="4"/>
+          <!-- Alitas de hada -->
+          <ellipse cx="22" cy="48" rx="14" ry="8" transform="rotate(-25 22 48)" fill="#fbcfe8" opacity="0.85"/>
+          <ellipse cx="78" cy="48" rx="14" ry="8" transform="rotate(25 78 48)" fill="#fbcfe8" opacity="0.85"/>
+          <!-- Cabello rosa -->
+          <circle cx="50" cy="44" r="24" fill="#ec4899"/>
+          <!-- Cara -->
+          <circle cx="50" cy="54" r="20" fill="#ffedd5"/>
+          <!-- Ojos grandes tiernos -->
+          <circle cx="43" cy="52" r="4" fill="#be185d"/>
+          <circle cx="57" cy="52" r="4" fill="#be185d"/>
+          <circle cx="44" cy="51" r="1.5" fill="#fff"/>
+          <circle cx="58" cy="51" r="1.5" fill="#fff"/>
+          <!-- Corazón flotante -->
+          <path d="M50 26 C47 22, 41 24, 41 29 C41 34, 50 39, 50 39 C50 39, 59 34, 59 29 C59 24, 53 22, 50 26 Z" fill="#fb7185"/>
+          <path d="M45 64 Q50 69 55 64" stroke="#be185d" stroke-width="2.5" fill="none"/>
+        </svg>`
+      },
+      {
+        id: 'sacrogrito',
+        name: 'Sacrogrito',
+        role: 'Tanque / Berserker',
+        color: '#dc2626',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#2a0808" stroke="#dc2626" stroke-width="4"/>
+          <!-- Cabello alborotado oscuro -->
+          <path d="M26 46 L22 25 L38 34 L50 18 L62 34 L78 25 L74 46 Z" fill="#1f2937"/>
+          <!-- Cara pálida -->
+          <circle cx="50" cy="53" r="21" fill="#e5e7eb"/>
+          <!-- Tatuajes de sangre en mejillas -->
+          <path d="M35 55 L41 64 M65 55 L59 64" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round"/>
+          <!-- Ojos blancos furiosos -->
+          <ellipse cx="42" cy="50" rx="5" ry="4" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+          <ellipse cx="58" cy="50" rx="5" ry="4" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+          <!-- Sonrisa desafiante -->
+          <path d="M41 66 Q50 61 59 66" stroke="#991b1b" stroke-width="3" fill="none"/>
+        </svg>`
+      },
+      {
+        id: 'xelor',
+        name: 'Xelor',
+        role: 'Retiro PA / Tiempo',
+        color: '#38bdf8',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#082f49" stroke="#38bdf8" stroke-width="4"/>
+          <!-- Vendas de momia azuladas -->
+          <circle cx="50" cy="52" r="23" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+          <path d="M29 44 L71 48 M28 58 L72 54 M33 35 L67 39" stroke="#0369a1" stroke-width="2.5"/>
+          <!-- Ojos brillantes amarillos -->
+          <circle cx="42" cy="50" r="4.5" fill="#fde047"/>
+          <circle cx="58" cy="50" r="4.5" fill="#fde047"/>
+          <!-- Agujas de reloj en la cabeza -->
+          <circle cx="50" cy="23" r="9" fill="#f59e0b" stroke="#fef08a" stroke-width="2"/>
+          <path d="M50 23 L50 17 M50 23 L55 23" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+        </svg>`
+      },
+      {
+        id: 'zurcarak',
+        name: 'Zurcarák',
+        role: 'Azar / Daño',
+        color: '#eab308',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#422006" stroke="#eab308" stroke-width="4"/>
+          <!-- Orejas de gato -->
+          <polygon points="27,42 22,16 44,32" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+          <polygon points="73,42 78,16 56,32" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+          <!-- Cabeza gatuna -->
+          <circle cx="50" cy="54" r="22" fill="#fef3c7"/>
+          <!-- Ojos de gato -->
+          <ellipse cx="42" cy="51" rx="4" ry="5.5" fill="#16a34a"/>
+          <ellipse cx="58" cy="51" rx="4" ry="5.5" fill="#16a34a"/>
+          <line x1="42" y1="47" x2="42" y2="55" stroke="#000" stroke-width="1.5"/>
+          <line x1="58" y1="47" x2="58" y2="55" stroke="#000" stroke-width="1.5"/>
+          <!-- Hocico y bigotes -->
+          <polygon points="47,58 53,58 50,62" fill="#f43f5e"/>
+          <path d="M44 65 Q50 69 50 62 Q50 69 56 65" stroke="#78350f" stroke-width="2" fill="none"/>
+          <path d="M24 56 L35 58 M24 62 L35 61 M76 56 L65 58 M76 62 L65 61" stroke="#92400e" stroke-width="1.5"/>
+        </svg>`
+      },
+      {
+        id: 'sadida',
+        name: 'Sadida',
+        role: 'Invocaciones / PM',
+        color: '#10b981',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#064e3b" stroke="#10b981" stroke-width="4"/>
+          <!-- Melena frondosa verde -->
+          <circle cx="34" cy="40" r="14" fill="#15803d"/>
+          <circle cx="66" cy="40" r="14" fill="#15803d"/>
+          <circle cx="50" cy="32" r="16" fill="#16a34a"/>
+          <!-- Cara morena -->
+          <circle cx="50" cy="55" r="20" fill="#b45309"/>
+          <!-- Máscara/Ojos brillantes -->
+          <circle cx="42" cy="53" r="4" fill="#fef08a"/>
+          <circle cx="58" cy="53" r="4" fill="#fef08a"/>
+          <!-- Hojita en la cabeza -->
+          <path d="M50 18 Q62 8 68 18 Q58 24 50 18 Z" fill="#4ade80"/>
+          <path d="M43 65 Q50 70 57 65" stroke="#fde047" stroke-width="2.5" fill="none"/>
+        </svg>`
+      },
+      {
+        id: 'osamodas',
+        name: 'Osamodas',
+        role: 'Invocador / Boost',
+        color: '#3b82f6',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#172554" stroke="#3b82f6" stroke-width="4"/>
+          <!-- Cuernos de demonio -->
+          <path d="M32 38 Q18 22 28 14 Q34 24 39 34 Z" fill="#fef3c7"/>
+          <path d="M68 38 Q82 22 72 14 Q66 24 61 34 Z" fill="#fef3c7"/>
+          <!-- Cara azulada -->
+          <circle cx="50" cy="54" r="21" fill="#60a5fa"/>
+          <!-- Ojos amarillos -->
+          <circle cx="42" cy="52" r="4" fill="#facc15"/>
+          <circle cx="58" cy="52" r="4" fill="#facc15"/>
+          <!-- Sonrisa pícara -->
+          <path d="M42 64 Q50 70 58 64" stroke="#1e3a8a" stroke-width="3" fill="none"/>
+        </svg>`
+      },
+      {
+        id: 'anutrof',
+        name: 'Anutrof',
+        role: 'Desechizo / Retiro PM',
+        color: '#f59e0b',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#451a03" stroke="#f59e0b" stroke-width="4"/>
+          <!-- Cara -->
+          <circle cx="50" cy="48" r="20" fill="#fed7aa"/>
+          <!-- Cejas blancas pobladas -->
+          <rect x="34" y="40" width="13" height="4" rx="2" fill="#f8fafc"/>
+          <rect x="53" y="40" width="13" height="4" rx="2" fill="#f8fafc"/>
+          <!-- Ojos -->
+          <circle cx="42" cy="47" r="3" fill="#1e293b"/>
+          <circle cx="58" cy="47" r="3" fill="#1e293b"/>
+          <!-- Barba blanca épica -->
+          <path d="M30 52 Q50 92 70 52 Q50 62 30 52 Z" fill="#f8fafc"/>
+          <!-- Pala dorada -->
+          <rect x="76" y="25" width="5" height="50" fill="#92400e"/>
+          <path d="M71 20 L86 20 L84 34 L73 34 Z" fill="#fbbf24"/>
+        </svg>`
+      },
+      {
+        id: 'sram',
+        name: 'Sram',
+        role: 'Invisibilidad / Trampas',
+        color: '#a855f7',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#2e1065" stroke="#a855f7" stroke-width="4"/>
+          <!-- Capucha oscura -->
+          <path d="M24 55 Q50 12 76 55 L70 74 L30 74 Z" fill="#1e1b4b"/>
+          <!-- Calavera -->
+          <circle cx="50" cy="50" r="17" fill="#f1f5f9"/>
+          <rect x="42" y="61" width="16" height="10" rx="3" fill="#f1f5f9"/>
+          <!-- Cuencas oculares -->
+          <circle cx="43" cy="49" r="4.5" fill="#0f172a"/>
+          <circle cx="57" cy="49" r="4.5" fill="#0f172a"/>
+          <circle cx="43" cy="49" r="1.5" fill="#c084fc"/>
+          <circle cx="57" cy="49" r="1.5" fill="#c084fc"/>
+          <!-- Dientes -->
+          <line x1="46" y1="63" x2="46" y2="70" stroke="#0f172a" stroke-width="2"/>
+          <line x1="50" y1="63" x2="50" y2="70" stroke="#0f172a" stroke-width="2"/>
+          <line x1="54" y1="63" x2="54" y2="70" stroke="#0f172a" stroke-width="2"/>
+        </svg>`
+      },
+      {
+        id: 'feca',
+        name: 'Feca',
+        role: 'Escudos / Protección',
+        color: '#06b6d4',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#164e63" stroke="#06b6d4" stroke-width="4"/>
+          <!-- Cabello castaño -->
+          <path d="M27 46 Q50 18 73 46 Z" fill="#78350f"/>
+          <!-- Cara -->
+          <circle cx="50" cy="52" r="20" fill="#fed7aa"/>
+          <circle cx="42" cy="50" r="3.5" fill="#0e7490"/>
+          <circle cx="58" cy="50" r="3.5" fill="#0e7490"/>
+          <path d="M44 61 Q50 66 56 61" stroke="#78350f" stroke-width="2.5" fill="none"/>
+          <!-- Escudo protector al frente -->
+          <path d="M35 66 L65 66 L61 84 L50 90 L39 84 Z" fill="#22d3ee" stroke="#ecfeff" stroke-width="2"/>
+        </svg>`
+      },
+      {
+        id: 'pandawa',
+        name: 'Pandawa',
+        role: 'Posicionamiento / Vulne',
+        color: '#f97316',
+        svg: `<svg viewBox="0 0 100 100" class="w-full h-full">
+          <circle cx="50" cy="50" r="44" fill="#3f1d0b" stroke="#f97316" stroke-width="4"/>
+          <!-- Orejas de panda -->
+          <circle cx="30" cy="32" r="9" fill="#18181b"/>
+          <circle cx="70" cy="32" r="9" fill="#18181b"/>
+          <!-- Cabeza blanca de panda -->
+          <circle cx="50" cy="52" r="22" fill="#ffffff"/>
+          <!-- Manchas negras en ojos -->
+          <ellipse cx="41" cy="50" rx="6" ry="5" transform="rotate(-15 41 50)" fill="#18181b"/>
+          <ellipse cx="59" cy="50" rx="6" ry="5" transform="rotate(15 59 50)" fill="#18181b"/>
+          <!-- Pupilas -->
+          <circle cx="42" cy="50" r="2" fill="#ffffff"/>
+          <circle cx="58" cy="50" r="2" fill="#ffffff"/>
+          <!-- Nariz y sonrisa -->
+          <ellipse cx="50" cy="58" rx="4" ry="2.5" fill="#18181b"/>
+          <path d="M44 64 Q50 69 56 64" stroke="#18181b" stroke-width="2.5" fill="none"/>
+          <!-- Sombrero cónico -->
+          <polygon points="24,34 50,14 76,34" fill="#d97706" stroke="#fef08a" stroke-width="1.5"/>
+        </svg>`
+      }
+    ];
+
+    // 2. ESTADO GLOBAL DE LA APLICACIÓN
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    let setupState = {
+      nameA: 'Equipo A',
+      nameB: 'Equipo B',
+      poolA: [], // array de ids de clase (máx 5)
+      poolB: []  // array de ids de clase (máx 5)
+    };
+
+    // Estado del Draft en curso
+    let draftState = {
+      active: false,
+      turn: 1,         // 1 a 7 (8 = finalizado)
+      subStep: 0,      // Para turnos con 2 selecciones (Turno 3 y Turno 4)
+      itemsA: [],      // [{ classId, status: 'available'|'picked'|'banned', order: number }]
+      itemsB: [],      // [{ classId, status: 'available'|'picked'|'banned', order: number }]
+      history: [],     // Pilas para deshacer
+      logs: []
+    };
+
+    // 3. MOTOR DE SONIDO SINTETIZADO (WEB AUDIO API - SIN ARCHIVOS EXTERNOS)
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound-icon').textContent = soundEnabled ? '🔊' : '🔇';
+      document.getElementById('sound-label').textContent = soundEnabled ? 'Sonido ON' : 'Silenciado';
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        const now = audioCtx.currentTime;
+
+        if (type === 'click') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(780, now + 0.08);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'pick') {
+          // Fanfarria dorada ascendente
+          const notes = [440, 554.37, 659.25, 880];
+          notes.forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.07);
+            gain.gain.setValueAtTime(0.18, now + i * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.07 + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + i * 0.07);
+            osc.stop(now + i * 0.07 + 0.25);
+          });
+        } else if (type === 'ban') {
+          // Golpe metálico de cadenas + grave infernal
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(160, now);
+          osc.frequency.exponentialRampToValueAtTime(42, now + 0.35);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.38);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.38);
+
+          // Brillo metálico agudo de cadena
+          const osc2 = audioCtx.createOscillator();
+          const gain2 = audioCtx.createGain();
+          osc2.type = 'square';
+          osc2.frequency.setValueAtTime(1250, now);
+          osc2.frequency.exponentialRampToValueAtTime(320, now + 0.14);
+          gain2.gain.setValueAtTime(0.12, now);
+          gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+          osc2.connect(gain2);
+          gain2.connect(audioCtx.destination);
+          osc2.start(now);
+          osc2.stop(now + 0.14);
+        } else if (type === 'finish') {
+          const chord = [261.63, 329.63, 392.00, 523.25];
+          chord.forEach((freq) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+            gain.gain.setValueAtTime(0.14, now);
+            gain.gain.exponentialRampToValueAtTime(0.005, now + 0.8);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.8);
+          });
+        }
+      } catch (e) {
+        // Ignorar si el navegador bloquea audio antes de interacción
+      }
+    }
+
+    // 4. GENERADOR DE BRASAS VISUALES
+    function spawnEmbers() {
+      const container = document.getElementById('embers-container');
+      for (let i = 0; i < 22; i++) {
+        const ember = document.createElement('div');
+        ember.className = 'ember';
+        ember.style.left = Math.random() * 100 + 'vw';
+        ember.style.animationDuration = (5 + Math.random() * 7) + 's';
+        ember.style.animationDelay = (Math.random() * 6) + 's';
+        const size = (3 + Math.random() * 5) + 'px';
+        ember.style.width = size;
+        ember.style.height = size;
+        container.appendChild(ember);
+      }
+    }
+
+    // 5. LÓGICA DE PANTALLA DE CONFIGURACIÓN (PRE-DRAFT)
+    function getClassById(id) {
+      return DOFUS_CLASSES.find(c => c.id === id);
+    }
+
+    function renderSetupScreen() {
+      const rosterA = document.getElementById('roster-a');
+      const rosterB = document.getElementById('roster-b');
+      rosterA.innerHTML = '';
+      rosterB.innerHTML = '';
+
+      DOFUS_CLASSES.forEach(cls => {
+        const inA = setupState.poolA.includes(cls.id);
+        const inB = setupState.poolB.includes(cls.id);
+
+        // Botón Equipo A
+        const btnA = document.createElement('button');
+        btnA.type = 'button';
+        btnA.onclick = () => togglePoolClass('A', cls.id);
+        btnA.className = `p-1.5 rounded-xl border flex flex-col items-center transition cursor-pointer ${
+          inA
+            ? 'bg-red-900/60 border-amber-400 shadow-md shadow-amber-500/30 scale-105'
+            : setupState.poolA.length >= 5
+              ? 'bg-stone-900/40 border-stone-800 opacity-40 cursor-not-allowed'
+              : 'bg-stone-900/90 border-stone-700 hover:border-amber-400/70'
+        }`;
+        btnA.innerHTML = `
+          <div class="w-10 h-10 sm:w-11 sm:h-11">${cls.svg}</div>
+          <span class="text-[10px] font-bold mt-1 text-gray-200 truncate w-full text-center">${cls.name}</span>
+        `;
+        rosterA.appendChild(btnA);
+
+        // Botón Equipo B
+        const btnB = document.createElement('button');
+        btnB.type = 'button';
+        btnB.onclick = () => togglePoolClass('B', cls.id);
+        btnB.className = `p-1.5 rounded-xl border flex flex-col items-center transition cursor-pointer ${
+          inB
+            ? 'bg-amber-900/60 border-amber-400 shadow-md shadow-amber-500/30 scale-105'
+            : setupState.poolB.length >= 5
+              ? 'bg-stone-900/40 border-stone-800 opacity-40 cursor-not-allowed'
+              : 'bg-stone-900/90 border-stone-700 hover:border-amber-400/70'
+        }`;
+        btnB.innerHTML = `
+          <div class="w-10 h-10 sm:w-11 sm:h-11">${cls.svg}</div>
+          <span class="text-[10px] font-bold mt-1 text-gray-200 truncate w-full text-center">${cls.name}</span>
+        `;
+        rosterB.appendChild(btnB);
+      });
+
+      // Renderizar slots seleccionados A
+      renderSelectedSlots('A', setupState.poolA, 'selected-slots-a');
+      renderSelectedSlots('B', setupState.poolB, 'selected-slots-b');
+
+      document.getElementById('count-a').textContent = `${setupState.poolA.length} / 5`;
+      document.getElementById('count-b').textContent = `${setupState.poolB.length} / 5`;
+
+      const ready = setupState.poolA.length === 5 && setupState.poolB.length === 5;
+      const startBtn = document.getElementById('btn-start-draft');
+      startBtn.disabled = !ready;
+      document.getElementById('setup-hint').textContent = ready
+        ? '¡Pools completos! Listos para entrar a la arena de La Copa Odiosa.'
+        : 'Debes seleccionar 5 clases distintas en cada equipo para comenzar.';
+    }
+
+    function renderSelectedSlots(team, pool, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      for (let i = 0; i < 5; i++) {
+        const classId = pool[i];
+        const slot = document.createElement('div');
+        if (classId) {
+          const cls = getClassById(classId);
+          slot.onclick = () => togglePoolClass(team, classId);
+          slot.title = `Quitar ${cls.name}`;
+          slot.className = 'rounded-lg bg-stone-800 border border-amber-500/60 p-1 flex flex-col items-center justify-center cursor-pointer hover:bg-red-950/70 transition';
+          slot.innerHTML = `
+            <div class="w-9 h-9">${cls.svg}</div>
+            <span class="text-[10px] font-extrabold text-amber-300 truncate w-full text-center mt-0.5">${cls.name}</span>
+          `;
+        } else {
+          slot.className = 'rounded-lg border border-dashed border-stone-700 flex items-center justify-center text-xs text-stone-600 font-bold h-16';
+          slot.textContent = `#${i + 1}`;
+        }
+        container.appendChild(slot);
+      }
+    }
+
+    function togglePoolClass(team, classId) {
+      const pool = team === 'A' ? setupState.poolA : setupState.poolB;
+      const idx = pool.indexOf(classId);
+      if (idx > -1) {
+        pool.splice(idx, 1);
+        playSound('click');
+      } else if (pool.length < 5) {
+        pool.push(classId);
+        playSound('click');
+      }
+      renderSetupScreen();
+    }
+
+    function fillRandomPools() {
+      playSound('click');
+      const shuffle = () => [...DOFUS_CLASSES].sort(() => Math.random() - 0.5).slice(0, 5).map(c => c.id);
+      setupState.poolA = shuffle();
+      setupState.poolB = shuffle();
+      renderSetupScreen();
+    }
+
+    function clearPools() {
+      playSound('click');
+      setupState.poolA = [];
+      setupState.poolB = [];
+      renderSetupScreen();
+    }
+
+    function rollCoin() {
+      playSound('pick');
+      const resultBox = document.getElementById('coin-result');
+      const winner = Math.random() < 0.5 ? 'EQUIPO A' : 'EQUIPO B';
+      resultBox.classList.remove('hidden');
+      resultBox.innerHTML = `🎲 Resultado del Dado: <span class="text-amber-400 underline">${winner}</span> gana la prioridad (asígnalo como Equipo A para iniciar el Turno 1).`;
+    }
+
+    // 6. INICIO Y MOTOR DE LOS 7 TURNOS EXACTOS DEL REGLAMENTO
+    function startDraft() {
+      if (setupState.poolA.length !== 5 || setupState.poolB.length !== 5) return;
+
+      const inputA = document.getElementById('input-name-a').value.trim();
+      const inputB = document.getElementById('input-name-b').value.trim();
+      setupState.nameA = inputA || 'Equipo A';
+      setupState.nameB = inputB || 'Equipo B';
+
+      document.getElementById('display-name-a').textContent = setupState.nameA;
+      document.getElementById('display-name-b').textContent = setupState.nameB;
+
+      draftState = {
+        active: true,
+        turn: 1,
+        subStep: 0,
+        itemsA: setupState.poolA.map(id => ({ classId: id, status: 'available', order: null })),
+        itemsB: setupState.poolB.map(id => ({ classId: id, status: 'available', order: null })),
+        history: [],
+        logs: []
+      };
+
+      document.getElementById('setup-screen').classList.add('hidden');
+      document.getElementById('draft-screen').classList.remove('hidden');
+      document.getElementById('btn-back-setup').classList.remove('hidden');
+
+      playSound('pick');
+      setHostsReaction(
+        '¡Arranca el Draft! Equipo A tiene la primera palabra en la arena.',
+        'Turno 1 en curso: Equipo A debe asegurar su primer personaje.'
+      );
+      renderDraftBoard();
+    }
+
+    function confirmReturnSetup() {
+      document.getElementById('draft-screen').classList.add('hidden');
+      document.getElementById('setup-screen').classList.remove('hidden');
+      document.getElementById('btn-back-setup').classList.add('hidden');
+    }
+
+    function resetCurrentDraft() {
+      startDraft();
+    }
+
+    function saveHistorySnapshot() {
+      draftState.history.push(JSON.stringify({
+        turn: draftState.turn,
+        subStep: draftState.subStep,
+        itemsA: draftState.itemsA,
+        itemsB: draftState.itemsB,
+        logs: draftState.logs
+      }));
+    }
+
+    function undoLastAction() {
+      if (draftState.history.length === 0) return;
+      const prev = JSON.parse(draftState.history.pop());
+      draftState.turn = prev.turn;
+      draftState.subStep = prev.subStep;
+      draftState.itemsA = prev.itemsA;
+      draftState.itemsB = prev.itemsB;
+      draftState.logs = prev.logs;
+      playSound('click');
+      setHostsReaction('¡Retrocedemos el reloj como un Xelor!', 'Se ha deshecho la última acción del draft.');
+      renderDraftBoard();
+    }
+
+    // Reglas exactas de los 7 turnos:
+    // Turno 1: A Pick 1 (sobre pool A)
+    // Turno 2: A Ban 1 (sobre pool B)
+    // Turno 3: B Pick 1 y Pick 2 (sobre pool B -> 2 clics)
+    // Turno 4: B Ban 1 y Ban 2 (sobre pool A -> 2 clics)
+    // Turno 5: Automático -> A Pick 2 y Pick 3 (sus 2 restantes)
+    // Turno 6: A Ban 2 (sobre pool B -> 1 clic)
+    // Turno 7: Automático -> B Pick 3 (su última restante)
+    function getTurnConfig() {
+      const nameA = setupState.nameA;
+      const nameB = setupState.nameB;
+
+      switch (draftState.turn) {
+        case 1:
+          return {
+            targetPool: 'A',
+            action: 'pick',
+            title: `TURNO 1: ${nameA.toUpperCase()} — PICK 1`,
+            subtitle: `Haz clic en 1 clase del pool de ${nameA} para enviarla a la arena.`
+          };
+        case 2:
+          return {
+            targetPool: 'B',
+            action: 'ban',
+            title: `TURNO 2: ${nameA.toUpperCase()} — BAN 1`,
+            subtitle: `Veta 1 clase del pool de ${nameB}. (Si vetas la misma que elegiste, bloqueas el espejo).`
+          };
+        case 3:
+          return {
+            targetPool: 'B',
+            action: 'pick',
+            title: `TURNO 3: ${nameB.toUpperCase()} — PICK ${draftState.subStep + 1} DE 2`,
+            subtitle: `Selecciona ${2 - draftState.subStep} clase(s) del pool de ${nameB} para su equipo.`
+          };
+        case 4:
+          return {
+            targetPool: 'A',
+            action: 'ban',
+            title: `TURNO 4: ${nameB.toUpperCase()} — BAN ${draftState.subStep + 1} DE 2`,
+            subtitle: `Veta ${2 - draftState.subStep} clase(s) de las 4 disponibles de ${nameA}.`
+          };
+        case 5:
+          return {
+            targetPool: null,
+            action: 'auto',
+            title: `TURNO 5: INCORPORACIÓN OBLIGATORIA (${nameA.toUpperCase()})`,
+            subtitle: `Las 2 clases sobrevivientes de ${nameA} entran automáticamente a la arena...`
+          };
+        case 6:
+          return {
+            targetPool: 'B',
+            action: 'ban',
+            title: `TURNO 6: ${nameA.toUpperCase()} — BAN FINAL (BAN 2)`,
+            subtitle: `De las 2 clases restantes de ${nameB}, veta 1 para definir el combate.`
+          };
+        case 7:
+          return {
+            targetPool: null,
+            action: 'auto',
+            title: `TURNO 7: ÚLTIMO SOBREVIVIENTE (${nameB.toUpperCase()})`,
+            subtitle: `La última clase viva de ${nameB} se une automáticamente al combate...`
+          };
+        default:
+          return {
+            targetPool: null,
+            action: 'done',
+            title: `⚔️ ¡COMPOSICIONES 3v3 DEFINIDAS! ⚔️`,
+            subtitle: `Revisión de bot obligatoria antes de iniciar el combate (Nivel 160 estricto).`
+          };
+      }
+    }
+
+    function handleCardClick(poolOwner, index) {
+      const cfg = getTurnConfig();
+      if (cfg.targetPool !== poolOwner) return;
+
+      const list = poolOwner === 'A' ? draftState.itemsA : draftState.itemsB;
+      const item = list[index];
+      if (!item || item.status !== 'available') return;
+
+      saveHistorySnapshot();
+
+      const cls = getClassById(item.classId);
+      const actorName = (draftState.turn === 1 || draftState.turn === 2 || draftState.turn === 6)
+        ? setupState.nameA
+        : setupState.nameB;
+
+      if (cfg.action === 'pick') {
+        const pickedCount = list.filter(i => i.status === 'picked').length;
+        item.status = 'picked';
+        item.order = pickedCount + 1;
+        playSound('pick');
+        draftState.logs.push({
+          type: 'pick',
+          text: `T${draftState.turn}: ${actorName} elige ${cls.name}`
+        });
+        setHostsReaction(
+          `¡${cls.name} salta a la arena por ${actorName}! Gran elección.`,
+          `${actorName} asegura a ${cls.name} en su alineación titular.`
+        );
+      } else if (cfg.action === 'ban') {
+        const bannedCount = list.filter(i => i.status === 'banned').length;
+        item.status = 'banned';
+        item.order = bannedCount + 1;
+        playSound('ban');
+        draftState.logs.push({
+          type: 'ban',
+          text: `T${draftState.turn}: ${actorName} veta ${cls.name}`
+        });
+
+        // Verificar si en el Turno 2 A baneó su propio Pick 1 (Anti-Mirror)
+        const pick1A = draftState.itemsA.find(i => i.status === 'picked' && i.order === 1);
+        if (draftState.turn === 2 && pick1A && pick1A.classId === item.classId) {
+          setHostsReaction(
+            `¡JAJAJA! ¡${actorName} encadenó al ${cls.name} rival para evitar el espejo!`,
+            `Bloqueo táctico aplicado: ${cls.name} queda vetado para el Equipo B.`
+          );
+        } else {
+          setHostsReaction(
+            `¡Cadenas al cuello para ${cls.name}! Ni lo verán en este combate.`,
+            `${actorName} veta a ${cls.name}. Queda fuera del enfrentamiento.`
+          );
+        }
+      }
+
+      advanceDraftTurn();
+      renderDraftBoard();
+    }
+
+    function advanceDraftTurn() {
+      // Turnos con 2 acciones (Turno 3 y Turno 4)
+      if (draftState.turn === 3 || draftState.turn === 4) {
+        if (draftState.subStep === 0) {
+          draftState.subStep = 1;
+          return;
+        } else {
+          draftState.subStep = 0;
+          draftState.turn++;
+        }
+      } else {
+        draftState.turn++;
+      }
+
+      // Ejecutar turnos automáticos (Turno 5 y Turno 7) con pausa dramática
+      if (draftState.turn === 5) {
+        renderDraftBoard();
+        setTimeout(() => {
+          if (draftState.turn !== 5) return;
+          let count = draftState.itemsA.filter(i => i.status === 'picked').length;
+          draftState.itemsA.forEach(item => {
+            if (item.status === 'available') {
+              count++;
+              item.status = 'picked';
+              item.order = count;
+              const cls = getClassById(item.classId);
+              draftState.logs.push({
+                type: 'pick',
+                text: `T5 (Auto): ${setupState.nameA} incorpora a ${cls.name}`
+              });
+            }
+          });
+          playSound('pick');
+          setHostsReaction(
+            `¡Sin escapatoria! Los dos sobrevivientes de ${setupState.nameA} entran directo a pelear.`,
+            `Turno 5 completado: ${setupState.nameA} cierra su equipo de 3 personajes.`
+          );
+          draftState.turn = 6;
+          renderDraftBoard();
+        }, 900);
+      } else if (draftState.turn === 7) {
+        renderDraftBoard();
+        setTimeout(() => {
+          if (draftState.turn !== 7) return;
+          let count = draftState.itemsB.filter(i => i.status === 'picked').length;
+          draftState.itemsB.forEach(item => {
+            if (item.status === 'available') {
+              count++;
+              item.status = 'picked';
+              item.order = count;
+              const cls = getClassById(item.classId);
+              draftState.logs.push({
+                type: 'pick',
+                text: `T7 (Auto): ${setupState.nameB} incorpora a ${cls.name}`
+              });
+            }
+          });
+          playSound('finish');
+          setHostsReaction(
+            `¡TODO LISTO! Que pasen a la arena y que ruede la sangre en Aermyfus.`,
+            `Draft finalizado. Jugadores, verifiquen su set con el bot antes de entrar.`
+          );
+          draftState.turn = 8;
+          renderDraftBoard();
+        }, 900);
+      }
+    }
+
+    function setHostsReaction(odiosaText, nostosText) {
+      document.getElementById('odiosa-quote').textContent = `"${odiosaText}"`;
+      document.getElementById('nostos-quote').textContent = `"${nostosText}"`;
+    }
+
+    // 7. RENDERIZADO DEL TABLERO EN VIVO
+    function renderDraftBoard() {
+      const cfg = getTurnConfig();
+
+      // Actualizar Banner Superior
+      const turnBadge = document.getElementById('turn-badge');
+      turnBadge.textContent = draftState.turn <= 7 ? `TURNO ${draftState.turn} DE 7` : 'DRAFT COMPLETADO';
+      turnBadge.className = `px-3 py-1 rounded-full font-black text-xs sm:text-sm uppercase tracking-wider shadow ${
+        cfg.action === 'ban'
+          ? 'bg-red-700 text-white'
+          : cfg.action === 'done'
+            ? 'bg-emerald-600 text-white'
+            : 'bg-amber-500 text-black'
+      }`;
+
+      document.getElementById('turn-title').textContent = cfg.title;
+      document.getElementById('turn-subtitle').textContent = cfg.subtitle;
+      document.getElementById('btn-undo').disabled = draftState.history.length === 0;
+
+      // Actualizar barra de 7 pasos
+      for (let step = 1; step <= 7; step++) {
+        const dot = document.getElementById(`step-dot-${step}`);
+        if (step < draftState.turn) {
+          dot.className = 'h-2 rounded-full bg-amber-400 shadow shadow-amber-400/50 transition-all';
+        } else if (step === draftState.turn) {
+          dot.className = 'h-2 rounded-full bg-red-500 animate-pulse transition-all';
+        } else {
+          dot.className = 'h-2 rounded-full bg-stone-800 transition-all';
+        }
+      }
+
+      // Resaltar borde del panel activo
+      const panelA = document.getElementById('panel-team-a');
+      const panelB = document.getElementById('panel-team-b');
+      panelA.style.borderColor = cfg.targetPool === 'A' ? (cfg.action === 'ban' ? '#ef4444' : '#f59e0b') : 'rgba(127, 29, 29, 0.5)';
+      panelB.style.borderColor = cfg.targetPool === 'B' ? (cfg.action === 'ban' ? '#ef4444' : '#f59e0b') : 'rgba(120, 53, 15, 0.5)';
+
+      // Renderizar ambos equipos
+      renderTeamColumn('A', draftState.itemsA, cfg);
+      renderTeamColumn('B', draftState.itemsB, cfg);
+
+      // Renderizar historial cronológico
+      const logContainer = document.getElementById('draft-log');
+      if (draftState.logs.length === 0) {
+        logContainer.innerHTML = '<span class="text-gray-500 italic">Esperando el Turno 1...</span>';
+      } else {
+        logContainer.innerHTML = draftState.logs.map(entry => {
+          const badgeClass = entry.type === 'ban'
+            ? 'bg-red-950/90 border-red-700 text-red-200'
+            : 'bg-amber-950/90 border-amber-600 text-amber-200';
+          const icon = entry.type === 'ban' ? '⛓️' : '⚔️';
+          return `<span class="px-2.5 py-1 rounded-lg border ${badgeClass} font-semibold">${icon} ${entry.text}</span>`;
+        }).join('');
+      }
+    }
+
+    function renderTeamColumn(team, items, cfg) {
+      const pickedItems = items.filter(i => i.status === 'picked').sort((a, b) => a.order - b.order);
+      const bannedCount = items.filter(i => i.status === 'banned').length;
+
+      document.getElementById(`picked-count-${team.toLowerCase()}`).textContent = pickedItems.length;
+      document.getElementById(`banned-count-${team.toLowerCase()}`).textContent = bannedCount;
+
+      // 1. Renderizar los 3 slots titulares en Arena
+      const arenaContainer = document.getElementById(`arena-slots-${team.toLowerCase()}`);
+      arenaContainer.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+        const picked = pickedItems[i];
+        const slotDiv = document.createElement('div');
+        if (picked) {
+          const cls = getClassById(picked.classId);
+          slotDiv.className = 'rounded-xl bg-gradient-to-b from-amber-900/50 to-stone-950 border-2 border-amber-400 p-2 flex flex-col items-center shadow-lg shadow-amber-900/30 transition-all';
+          slotDiv.innerHTML = `
+            <span class="text-[10px] font-black text-amber-300 uppercase tracking-wider mb-1">PICK #${i + 1}</span>
+            <div class="w-12 h-12 sm:w-14 sm:h-14">${cls.svg}</div>
+            <span class="text-xs sm:text-sm font-black text-white mt-1">${cls.name}</span>
+          `;
+        } else {
+          slotDiv.className = 'rounded-xl bg-black/40 border border-dashed border-stone-700 p-2 flex flex-col items-center justify-center min-h-[104px] text-stone-600';
+          slotDiv.innerHTML = `
+            <span class="text-xs font-extrabold">SLOT #${i + 1}</span>
+            <span class="text-[10px]">Vacío</span>
+          `;
+        }
+        arenaContainer.appendChild(slotDiv);
+      }
+
+      // 2. Renderizar las 5 cartas del Pool
+      const poolContainer = document.getElementById(`pool-cards-${team.toLowerCase()}`);
+      poolContainer.innerHTML = '';
+
+      items.forEach((item, idx) => {
+        const cls = getClassById(item.classId);
+        const isTarget = cfg.targetPool === team && item.status === 'available';
+
+        let stateClass = '';
+        if (item.status === 'picked') {
+          stateClass = 'state-picked';
+        } else if (item.status === 'banned') {
+          stateClass = 'state-banned';
+        } else if (isTarget) {
+          stateClass = cfg.action === 'ban' ? 'selectable-ban' : 'selectable-pick';
+        } else {
+          stateClass = 'disabled-card';
+        }
+
+        const card = document.createElement('div');
+        card.className = `class-card rounded-xl p-2.5 flex flex-col items-center justify-between select-none ${stateClass}`;
+        if (isTarget) {
+          card.onclick = () => handleCardClick(team, idx);
+        }
+
+        // Overlay de cadenas si está baneado
+        const chainsHTML = item.status === 'banned' ? `
+          <div class="chains-overlay">
+            <svg viewBox="0 0 100 100" class="w-full h-full opacity-90">
+              <!-- Cadena diagonal 1 -->
+              <line x1="8" y1="8" x2="92" y2="92" stroke="#9ca3af" stroke-width="7" stroke-dasharray="10,4" stroke-linecap="round"/>
+              <line x1="8" y1="8" x2="92" y2="92" stroke="#1f2937" stroke-width="2" stroke-dasharray="10,4"/>
+              <!-- Cadena diagonal 2 -->
+              <line x1="92" y1="8" x2="8" y2="92" stroke="#9ca3af" stroke-width="7" stroke-dasharray="10,4" stroke-linecap="round"/>
+              <line x1="92" y1="8" x2="8" y2="92" stroke="#1f2937" stroke-width="2" stroke-dasharray="10,4"/>
+            </svg>
+            <div class="absolute ban-stamp text-[10px] sm:text-xs">BANEADO</div>
+          </div>
+        ` : '';
+
+        // Etiqueta de estado inferior
+        let footerTag = `<span class="text-[10px] text-gray-400 font-semibold">${cls.role.split('/')[0]}</span>`;
+        if (item.status === 'picked') {
+          footerTag = `<span class="pick-stamp text-[9px]">EN ARENA</span>`;
+        } else if (item.status === 'banned') {
+          footerTag = `<span class="text-[10px] text-red-400 font-black uppercase">VETADO</span>`;
+        } else if (isTarget) {
+          footerTag = cfg.action === 'ban'
+            ? `<span class="text-[10px] text-red-400 font-black animate-bounce">⛓️ VETAR</span>`
+            : `<span class="text-[10px] text-amber-300 font-black animate-bounce">⚔️ ELEGIR</span>`;
+        }
+
+        card.innerHTML = `
+          ${chainsHTML}
+          <div class="avatar-wrapper w-14 h-14 sm:w-16 sm:h-16 transition-all duration-300">
+            ${cls.svg}
+          </div>
+          <div class="text-center mt-1.5 w-full">
+            <div class="text-xs font-extrabold text-white truncate">${cls.name}</div>
+            <div class="mt-1">${footerTag}</div>
+          </div>
+        `;
+
+        poolContainer.appendChild(card);
+      });
+    }
+
+    // Inicializar al cargar
+    window.onload = function () {
+      spawnEmbers();
+      renderSetupScreen();
+    };
+  </script>
+</body>
+</html>
